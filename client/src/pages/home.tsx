@@ -104,53 +104,39 @@ export default function Home() {
       </div>
 
       {/* Quick Actions */}
-      <div className="px-4 py-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-        <div className="space-y-3">
+      <div className="px-4 py-4">
+        <h3 className="text-lg font-semibold text-gray-900 mb-3">Quick Actions</h3>
+        <div className="grid grid-cols-3 gap-3">
           
-          {/* Screenshot Upload Card */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Camera className="w-5 h-5 text-primary" />
-              </div>
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900">Import from Screenshot</h4>
-                <p className="text-sm text-gray-500">Upload your current app's progress</p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-gray-400" />
+          {/* Screenshot Upload */}
+          <button className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center" data-testid="button-import-screenshot">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <Camera className="w-4 h-4 text-primary" />
             </div>
-          </div>
+            <div className="text-xs font-medium text-gray-900">Import</div>
+            <div className="text-xs text-gray-500 mt-1">Screenshot</div>
+          </button>
 
           {/* Manual Weight Entry */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <Plus className="w-5 h-5 text-secondary" />
-              </div>
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900">Log Weight</h4>
-                <p className="text-sm text-gray-500">Quick manual entry</p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-gray-400" />
+          <button className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center" data-testid="button-log-weight">
+            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <Plus className="w-4 h-4 text-secondary" />
             </div>
-          </div>
+            <div className="text-xs font-medium text-gray-900">Log</div>
+            <div className="text-xs text-gray-500 mt-1">Weight</div>
+          </button>
 
           {/* Injection Counter */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                <Syringe className="w-5 h-5 text-accent" />
-              </div>
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900">Injection Counter</h4>
-                <p className="text-sm text-gray-500">Track your medication doses</p>
-              </div>
-              <div className="bg-accent text-white text-xs px-2 py-1 rounded-full font-medium" data-testid="text-injection-count">
-                {injectionCount?.count || 0}
-              </div>
+          <button className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center relative" data-testid="button-injection-log">
+            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+              <Syringe className="w-4 h-4 text-accent" />
             </div>
-          </div>
+            <div className="text-xs font-medium text-gray-900">Injection</div>
+            <div className="text-xs text-gray-500 mt-1">Log</div>
+            <div className="absolute -top-1 -right-1 bg-accent text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium" data-testid="text-injection-count">
+              {injectionCount?.count || 0}
+            </div>
+          </button>
 
         </div>
       </div>

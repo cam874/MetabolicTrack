@@ -119,14 +119,16 @@ export default function Schedule() {
                       <Clock className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">
-                        {formatDate(date)}
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium text-gray-900">
+                          {formatDate(date)}
+                        </span>
                         {index === 0 && (
-                          <Badge variant="secondary" className="ml-2 text-xs">
+                          <Badge variant="secondary" className="text-xs">
                             Next
                           </Badge>
                         )}
-                      </p>
+                      </div>
                       <p className="text-sm text-gray-500">
                         {activeMedication?.currentDose}{activeMedication?.unit} injection
                       </p>
