@@ -50,14 +50,8 @@ export default function Onboarding() {
 
   const completeMutation = useMutation({
     mutationFn: async (onboardingData: OnboardingData) => {
-      // Get current user
-      const user = await apiRequest("GET", "/api/demo-user");
-      console.log("User data:", user);
-      const userId = user.id;
-      console.log("User ID:", userId);
-
-      // Update user profile
-      await apiRequest("PATCH", "/api/users/demo", {
+      // Update user profile first to get the updated user
+      const userResponse = await apiRequest("PATCH", "/api/users/demo", {
         firstName: onboardingData.firstName,
         lastName: onboardingData.lastName,
         email: onboardingData.email,
@@ -66,6 +60,10 @@ export default function Onboarding() {
         weightUnit: onboardingData.weightUnit,
         hasCompletedOnboarding: "true"
       });
+
+      const updatedUser = await userResponse.json();
+      console.log("Updated user:", updatedUser);
+      const userId = updatedUser.id;
 
       // Create initial weight entry
       await apiRequest("POST", "/api/weight-entries", {
