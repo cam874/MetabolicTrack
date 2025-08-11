@@ -16,14 +16,14 @@ function Router() {
     queryKey: ["/api/demo-user"],
   });
 
-  // Show onboarding if user hasn't completed it
-  if (demoUser && demoUser.hasCompletedOnboarding === "false") {
-    return (
-      <div className="min-h-screen">
-        <Onboarding />
-      </div>
-    );
-  }
+  // Onboarding disabled for now
+  // if (demoUser && demoUser.hasCompletedOnboarding === "false") {
+  //   return (
+  //     <div className="min-h-screen">
+  //       <Onboarding />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50">
