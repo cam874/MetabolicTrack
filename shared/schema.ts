@@ -96,6 +96,7 @@ export const insertDataImportSchema = createInsertSchema(dataImports).omit({
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type UpsertUser = typeof users.$inferInsert;
 
 export type WeightEntry = typeof weightEntries.$inferSelect;
 export type InsertWeightEntry = z.infer<typeof insertWeightEntrySchema>;

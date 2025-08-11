@@ -219,7 +219,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Demo user endpoint
   app.get("/api/demo-user", async (req, res) => {
     try {
-      const demoUser = await storage.getUserByUsername("demo");
+      const demoUser = await storage.getUser("demo-user-id");
+      if (!demoUser) {
+        return res.status(404).json({ message: "Demo user not found" });
+      }
       res.json(demoUser);
     } catch (error) {
       res.status(500).json({ message: error instanceof Error ? error.message : "Internal server error" });

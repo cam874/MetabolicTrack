@@ -68,7 +68,34 @@ export default function Home() {
   })();
 
   return (
-    <main className="max-w-md mx-auto min-h-screen pb-20 pt-4">
+    <main className="max-w-md mx-auto min-h-screen pb-20">
+      {/* Mobile Navigation */}
+      <nav className="glass-effect border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-primary to-purple-600 rounded-lg flex items-center justify-center">
+                <i className="fas fa-chart-line text-white text-sm"></i>
+              </div>
+              <h1 className="text-lg font-semibold text-gray-900">MedTrack Pro</h1>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button 
+                className="p-2 text-gray-600 hover:text-primary transition-colors"
+                data-testid="button-notifications"
+              >
+                <Bell className="w-5 h-5" />
+              </button>
+              <button 
+                className="p-2 text-gray-600 hover:text-primary transition-colors"
+                data-testid="button-profile"
+              >
+                <UserCircle className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
 
       {/* Welcome Header */}
       <div className="px-4 py-6 bg-gradient-to-br from-primary to-purple-600 text-white">

@@ -1,18 +1,32 @@
 import { 
-  type User, type InsertUser,
-  type WeightEntry, type InsertWeightEntry,
-  type Medication, type InsertMedication,
-  type InjectionLog, type InsertInjectionLog,
-  type DataImport, type InsertDataImport
+  users,
+  weightEntries,
+  medications,
+  injectionLogs,
+  dataImports,
+  type User, 
+  type InsertUser,
+  type UpsertUser,
+  type WeightEntry, 
+  type InsertWeightEntry,
+  type Medication, 
+  type InsertMedication,
+  type InjectionLog, 
+  type InsertInjectionLog,
+  type DataImport, 
+  type InsertDataImport
 } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
-  // Users
+  // Users (including Replit Auth methods)
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User>;
+  upsertUser(user: UpsertUser): Promise<User>;
 
   // Weight Entries
   getWeightEntries(userId: string, limit?: number): Promise<WeightEntry[]>;
@@ -286,4 +300,254 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  // User operations (required for Replit Auth)
+  async getUser(id: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(userData: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(userData).returning();
+    return user;
+  }
+
+  async updateUser(id: string, updates: Partial<User>): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return user;
+  }
+
+  // Weight entry operations
+  async getWeightEntries(userId: string, limit?: number): Promise<WeightEntry[]> {
+    const query = db
+      .select()
+      .from(weightEntries)
+      .where(eq(weightEntries.userId, userId))
+      .orderBy(desc(weightEntries.date));
+    
+    if (limit) {
+      return await query.limit(limit);
+    }
+    return await query;
+  }
+
+  async createWeightEntry(entry: InsertWeightEntry): Promise<WeightEntry> {
+    const [weightEntry] = await db
+      .insert(weightEntries)
+      .values(entry)
+      .returning();
+    return weightEntry;
+  }
+
+  async getLatestWeight(userId: string): Promise<WeightEntry | undefined> {
+    const entries = await this.getWeightEntries(userId, 1);
+    return entries[0];
+  }
+
+  async deleteWeightEntry(entryId: string): Promise<void> {
+    await db.delete(weightEntries).where(eq(weightEntries.id, entryId));
+  }
+
+  // Medication operations
+  async getUserMedications(userId: string): Promise<Medication[]> {
+    return await db
+      .select()
+      .from(medications)
+      .where(eq(medications.userId, userId))
+      .orderBy(desc(medications.createdAt));
+  }
+
+  async createMedication(medication: InsertMedication): Promise<Medication> {
+    const [med] = await db
+      .insert(medications)
+      .values(medication)
+      .returning();
+    return med;
+  }
+
+  async updateMedication(id: string, updates: Partial<Medication>): Promise<Medication> {
+    const [medication] = await db
+      .update(medications)
+      .set(updates)
+      .where(eq(medications.id, id))
+      .returning();
+    return medication;
+  }
+
+  async getActiveMedication(userId: string): Promise<Medication | undefined> {
+    const [medication] = await db
+      .select()
+      .from(medications)
+      .where(eq(medications.userId, userId))
+      .orderBy(desc(medications.createdAt))
+      .limit(1);
+    return medication;
+  }
+
+  // Injection log operations
+  async getInjectionLogs(userId: string, medicationId?: string): Promise<InjectionLog[]> {
+    const query = db
+      .select()
+      .from(injectionLogs)
+      .where(eq(injectionLogs.userId, userId))
+      .orderBy(desc(injectionLogs.date));
+
+    return await query;
+  }
+
+  async createInjectionLog(log: InsertInjectionLog): Promise<InjectionLog> {
+    const [injectionLog] = await db
+      .insert(injectionLogs)
+      .values(log)
+      .returning();
+    return injectionLog;
+  }
+
+  async getInjectionCount(userId: string, medicationId?: string): Promise<number> {
+    const logs = await this.getInjectionLogs(userId, medicationId);
+    return logs.length;
+  }
+
+  async deleteInjectionLog(logId: string): Promise<void> {
+    await db.delete(injectionLogs).where(eq(injectionLogs.id, logId));
+  }
+
+  // Data import operations
+  async createDataImport(dataImport: InsertDataImport): Promise<DataImport> {
+    const [importRecord] = await db
+      .insert(dataImports)
+      .values(dataImport)
+      .returning();
+    return importRecord;
+  }
+
+  async updateDataImport(id: string, updates: Partial<DataImport>): Promise<DataImport> {
+    const [dataImport] = await db
+      .update(dataImports)
+      .set(updates)
+      .where(eq(dataImports.id, id))
+      .returning();
+    return dataImport;
+  }
+
+  async getUserDataImports(userId: string): Promise<DataImport[]> {
+    return await db
+      .select()
+      .from(dataImports)
+      .where(eq(dataImports.userId, userId))
+      .orderBy(desc(dataImports.createdAt));
+  }
+}
+
+// Use DatabaseStorage instead of MemStorage
+export const storage = new DatabaseStorage();
+
+// Initialize with demo data for development
+const initializeDemoData = async () => {
+  try {
+    // Check if demo user already exists
+    const existingUser = await storage.getUser("demo-user-id");
+    if (existingUser) return;
+
+    // Create demo user
+    const demoUser = await storage.createUser({
+      id: "demo-user-id",
+      username: "demo_user",
+      firstName: "Demo",
+      lastName: "User",
+      email: "demo@example.com",
+      startWeight: "220",
+      goalWeight: "180", 
+      weightUnit: "lbs",
+      hasCompletedOnboarding: "true"
+    });
+
+    console.log("Created demo user:", demoUser.id);
+
+    // Create demo medication
+    const medication = await storage.createMedication({
+      userId: demoUser.id,
+      name: "Ozempic",
+      activeIngredient: "semaglutide",
+      dosage: "0.5",
+      unit: "mg",
+      frequency: "weekly",
+      startDate: new Date("2024-01-15"),
+      nextDoseDate: new Date(),
+      isActive: "true",
+      titrationSchedule: JSON.stringify([
+        { week: 1, dose: "0.25mg" },
+        { week: 5, dose: "0.5mg" },
+        { week: 9, dose: "1.0mg" }
+      ])
+    });
+
+    // Create demo weight entries
+    const weightEntries = [
+      { weight: "220", unit: "lbs", date: new Date("2024-01-15"), notes: "Starting weight" },
+      { weight: "217", unit: "lbs", date: new Date("2024-01-22"), notes: null },
+      { weight: "215", unit: "lbs", date: new Date("2024-01-29"), notes: null },
+      { weight: "212", unit: "lbs", date: new Date("2024-02-05"), notes: "Feeling good!" },
+      { weight: "210", unit: "lbs", date: new Date("2024-02-12"), notes: null },
+      { weight: "208", unit: "lbs", date: new Date("2024-02-19"), notes: null },
+      { weight: "205", unit: "lbs", date: new Date("2024-02-26"), notes: "Goal in sight!" }
+    ];
+
+    for (const entry of weightEntries) {
+      await storage.createWeightEntry({
+        ...entry,
+        userId: demoUser.id
+      });
+    }
+
+    // Create demo injection logs  
+    const injectionLogs = [
+      { dose: "0.25", unit: "mg", injectionSite: "abdomen", date: new Date("2024-01-15"), notes: "First injection" },
+      { dose: "0.25", unit: "mg", injectionSite: "thigh", date: new Date("2024-01-22"), notes: null },
+      { dose: "0.25", unit: "mg", injectionSite: "arm", date: new Date("2024-01-29"), notes: null },
+      { dose: "0.25", unit: "mg", injectionSite: "abdomen", date: new Date("2024-02-05"), notes: null },
+      { dose: "0.5", unit: "mg", injectionSite: "thigh", date: new Date("2024-02-12"), notes: "Increased dose" },
+      { dose: "0.5", unit: "mg", injectionSite: "arm", date: new Date("2024-02-19"), notes: null },
+      { dose: "0.5", unit: "mg", injectionSite: "abdomen", date: new Date("2024-02-26"), notes: null }
+    ];
+
+    for (const log of injectionLogs) {
+      await storage.createInjectionLog({
+        ...log,
+        userId: demoUser.id,
+        medicationId: medication.id
+      });
+    }
+
+    console.log("Demo data initialized successfully");
+  } catch (error) {
+    console.error("Error initializing demo data:", error);
+  }
+};
+
+// Initialize demo data when storage is created
+initializeDemoData();
