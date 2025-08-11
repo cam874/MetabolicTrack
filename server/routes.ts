@@ -115,10 +115,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/injection-logs", async (req, res) => {
     try {
+      // Convert date string to Date object if needed
+      if (req.body.date && typeof req.body.date === 'string') {
+        req.body.date = new Date(req.body.date);
+      }
       const data = insertInjectionLogSchema.parse(req.body);
       const log = await storage.createInjectionLog(data);
       res.json(log);
     } catch (error) {
+      console.error("Injection log creation error:", error);
       res.status(400).json({ message: error instanceof Error ? error.message : "Invalid data" });
     }
   });

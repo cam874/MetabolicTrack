@@ -1,11 +1,28 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Camera, Plus, Syringe, Bell, UserCircle, ChevronRight } from "lucide-react";
 import WeightChart from "@/components/weight-chart";
 import UploadArea from "@/components/upload-area";
 import InjectionCounter from "@/components/injection-counter";
 import MedicationTracker from "@/components/medication-tracker";
+import AddEntryDialog from "@/components/add-entry-dialog";
 
 export default function Home() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTab, setDialogTab] = useState("weight");
+
+  // Listen for add dialog events from navigation
+  useEffect(() => {
+    const handleOpenDialog = (event: CustomEvent) => {
+      setDialogTab(event.detail.tab || "weight");
+      setDialogOpen(true);
+    };
+
+    window.addEventListener('openAddDialog', handleOpenDialog as EventListener);
+    return () => {
+      window.removeEventListener('openAddDialog', handleOpenDialog as EventListener);
+    };
+  }, []);
   const { data: demoUser } = useQuery({
     queryKey: ["/api/demo-user"],
   });
@@ -122,7 +139,14 @@ export default function Home() {
         <div className="grid grid-cols-3 gap-3">
           
           {/* Screenshot Upload */}
-          <button className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center" data-testid="button-import-screenshot">
+          <button 
+            onClick={() => {
+              setDialogTab("import");
+              setDialogOpen(true);
+            }}
+            className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center" 
+            data-testid="button-import-screenshot"
+          >
             <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
               <Camera className="w-4 h-4 text-primary" />
             </div>
@@ -131,7 +155,14 @@ export default function Home() {
           </button>
 
           {/* Manual Weight Entry */}
-          <button className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center" data-testid="button-log-weight">
+          <button 
+            onClick={() => {
+              setDialogTab("weight");
+              setDialogOpen(true);
+            }}
+            className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center" 
+            data-testid="button-log-weight"
+          >
             <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
               <Plus className="w-4 h-4 text-secondary" />
             </div>
@@ -140,7 +171,14 @@ export default function Home() {
           </button>
 
           {/* Injection Counter */}
-          <button className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center relative" data-testid="button-injection-log">
+          <button 
+            onClick={() => {
+              setDialogTab("injection");
+              setDialogOpen(true);
+            }}
+            className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center relative" 
+            data-testid="button-injection-log"
+          >
             <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
               <Syringe className="w-4 h-4 text-accent" />
             </div>
@@ -170,16 +208,12 @@ export default function Home() {
         <MedicationTracker userId={demoUser?.id || ""} />
       </div>
 
-      {/* Screenshot Upload */}
-      <div className="px-4 py-2 mb-6">
-        <UploadArea userId={demoUser?.id || ""} />
-      </div>
-
-      {/* Injection Counter */}
-      <div className="px-4 py-2 mb-6">
-        <InjectionCounter userId={demoUser?.id || ""} />
-      </div>
-
+      {/* Add Entry Dialog */}
+      <AddEntryDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        defaultTab={dialogTab}
+      />
     </main>
   );
 }

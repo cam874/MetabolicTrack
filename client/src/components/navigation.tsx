@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import { Plus } from "lucide-react";
 
 export default function Navigation() {
   const [location] = useLocation();
@@ -34,10 +35,14 @@ export default function Navigation() {
           
           {/* Center Add Button */}
           <button 
+            onClick={() => {
+              // Trigger the modal dialog from home page
+              window.dispatchEvent(new CustomEvent('openAddDialog', { detail: { tab: 'weight' } }));
+            }}
             className="w-14 h-14 bg-gradient-to-r from-primary to-purple-600 rounded-full flex items-center justify-center shadow-lg -mt-6 border-4 border-white"
             data-testid="button-add-entry"
           >
-            <i className="fas fa-plus text-white text-lg"></i>
+            <Plus className="text-white text-lg" />
           </button>
 
           {navItems.slice(2).map((item) => (
