@@ -52,7 +52,9 @@ export default function Onboarding() {
     mutationFn: async (onboardingData: OnboardingData) => {
       // Get current user
       const user = await apiRequest("GET", "/api/demo-user");
+      console.log("User data:", user);
       const userId = user.id;
+      console.log("User ID:", userId);
 
       // Update user profile
       await apiRequest("PATCH", "/api/users/demo", {
@@ -70,7 +72,7 @@ export default function Onboarding() {
         userId: userId,
         weight: onboardingData.startWeight,
         unit: onboardingData.weightUnit,
-        date: new Date(onboardingData.startDate).toISOString(),
+        date: new Date(onboardingData.startDate),
         notes: "Starting weight"
       });
 
@@ -83,8 +85,8 @@ export default function Onboarding() {
         targetDose: "2.0", // Default target
         unit: "mg",
         frequency: "weekly",
-        startDate: new Date(onboardingData.startDate).toISOString(),
-        nextDoseDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // Next week
+        startDate: new Date(onboardingData.startDate),
+        nextDoseDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week
         isActive: "true"
       });
 
