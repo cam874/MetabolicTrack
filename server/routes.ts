@@ -29,6 +29,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/weight-entries", async (req, res) => {
     try {
+      // Convert date string to Date object if needed
+      if (req.body.date && typeof req.body.date === 'string') {
+        req.body.date = new Date(req.body.date);
+      }
       const data = insertWeightEntrySchema.parse(req.body);
       const entry = await storage.createWeightEntry(data);
       res.json(entry);
@@ -71,6 +75,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/medications", async (req, res) => {
     try {
+      // Convert date strings to Date objects if needed
+      if (req.body.startDate && typeof req.body.startDate === 'string') {
+        req.body.startDate = new Date(req.body.startDate);
+      }
+      if (req.body.nextDoseDate && typeof req.body.nextDoseDate === 'string') {
+        req.body.nextDoseDate = new Date(req.body.nextDoseDate);
+      }
       const data = insertMedicationSchema.parse(req.body);
       const medication = await storage.createMedication(data);
       res.json(medication);
