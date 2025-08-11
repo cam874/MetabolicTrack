@@ -1,30 +1,25 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider, useQuery } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAuth } from "@/hooks/useAuth";
 import Navigation from "@/components/navigation";
 import Home from "@/pages/home";
+import Landing from "@/pages/landing";
 import Analytics from "@/pages/analytics";
 import Schedule from "@/pages/schedule";
 import Settings from "@/pages/settings";
 import Onboarding from "@/pages/onboarding";
 import NotFound from "@/pages/not-found";
-import { Bell, User } from "lucide-react";
 
 function Router() {
-  const { data: demoUser } = useQuery({
-    queryKey: ["/api/demo-user"],
-  });
+  const { isAuthenticated, isLoading } = useAuth();
 
-  // Onboarding disabled for now
-  // if (demoUser && demoUser.hasCompletedOnboarding === "false") {
-  //   return (
-  //     <div className="min-h-screen">
-  //       <Onboarding />
-  //     </div>
-  //   );
-  // }
+  // Show landing page for unauthenticated users
+  if (isLoading || !isAuthenticated) {
+    return <Landing />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -45,8 +40,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
         <Router />
+        <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
   );

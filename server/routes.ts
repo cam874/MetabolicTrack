@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 import { 
   insertWeightEntrySchema,
   insertMedicationSchema,
@@ -15,6 +16,20 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup Replit Auth
+  await setupAuth(app);
+
+  // Auth routes
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
   // Weight entries
   app.get("/api/weight-entries/:userId", async (req, res) => {
     try {
@@ -216,17 +231,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Demo user endpoint
+  // Demo endpoint (remove in production)
   app.get("/api/demo-user", async (req, res) => {
-    try {
-      const demoUser = await storage.getUser("demo-user-id");
-      if (!demoUser) {
-        return res.status(404).json({ message: "Demo user not found" });
-      }
-      res.json(demoUser);
-    } catch (error) {
-      res.status(500).json({ message: error instanceof Error ? error.message : "Internal server error" });
-    }
+    res.status(404).json({ message: "Demo user disabled - please log in with Replit Auth" });
   });
 
   // Update user endpoint
