@@ -1,6 +1,6 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/navigation";
@@ -8,9 +8,23 @@ import Home from "@/pages/home";
 import Analytics from "@/pages/analytics";
 import Schedule from "@/pages/schedule";
 import Settings from "@/pages/settings";
+import Onboarding from "@/pages/onboarding";
 import NotFound from "@/pages/not-found";
 
 function Router() {
+  const { data: demoUser } = useQuery({
+    queryKey: ["/api/demo-user"],
+  });
+
+  // Show onboarding if user hasn't completed it
+  if (demoUser && demoUser.hasCompletedOnboarding === "false") {
+    return (
+      <div className="min-h-screen">
+        <Onboarding />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Switch>
@@ -18,6 +32,7 @@ function Router() {
         <Route path="/analytics" component={Analytics} />
         <Route path="/schedule" component={Schedule} />
         <Route path="/settings" component={Settings} />
+        <Route path="/onboarding" component={Onboarding} />
         <Route component={NotFound} />
       </Switch>
       <Navigation />

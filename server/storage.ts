@@ -12,6 +12,7 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, updates: Partial<User>): Promise<User>;
 
   // Weight Entries
   getWeightEntries(userId: string, limit?: number): Promise<WeightEntry[]>;
@@ -52,6 +53,10 @@ export class MemStorage implements IStorage {
       firstName: "Sarah",
       lastName: "Johnson",
       email: "sarah@example.com",
+      startWeight: null,
+      goalWeight: null,
+      weightUnit: "lbs",
+      hasCompletedOnboarding: "false",
       createdAt: new Date(),
     };
     this.users.set(demoUserId, demoUser);
@@ -144,6 +149,15 @@ export class MemStorage implements IStorage {
     const user: User = { ...insertUser, id, createdAt: new Date() };
     this.users.set(id, user);
     return user;
+  }
+
+  async updateUser(id: string, updates: Partial<User>): Promise<User> {
+    const existing = this.users.get(id);
+    if (!existing) throw new Error("User not found");
+    
+    const updated = { ...existing, ...updates };
+    this.users.set(id, updated);
+    return updated;
   }
 
   // Weight entry methods

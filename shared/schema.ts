@@ -10,6 +10,10 @@ export const users = pgTable("users", {
   firstName: text("first_name"),
   lastName: text("last_name"),
   email: text("email"),
+  startWeight: decimal("start_weight", { precision: 5, scale: 2 }),
+  goalWeight: decimal("goal_weight", { precision: 5, scale: 2 }),
+  weightUnit: text("weight_unit").notNull().default("lbs"),
+  hasCompletedOnboarding: text("has_completed_onboarding").notNull().default("false"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

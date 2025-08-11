@@ -26,9 +26,22 @@ export default function Home() {
   });
 
   const currentWeight = latestWeight?.weight ? parseFloat(latestWeight.weight) : 0;
-  const startWeight = weightEntries?.[weightEntries.length - 1]?.weight ? parseFloat(weightEntries[weightEntries.length - 1].weight) : 0;
+  const startWeight = demoUser?.startWeight ? parseFloat(demoUser.startWeight) : 
+    (weightEntries?.[weightEntries.length - 1]?.weight ? parseFloat(weightEntries[weightEntries.length - 1].weight) : 0);
+  const goalWeight = demoUser?.goalWeight ? parseFloat(demoUser.goalWeight) : 0;
+  const weightUnit = demoUser?.weightUnit || "lbs";
   const totalLoss = startWeight - currentWeight;
-  const monthlyLoss = 8.2; // Mock calculation
+  
+  // Calculate monthly loss from recent entries
+  const monthlyLoss = (() => {
+    if (!weightEntries || weightEntries.length < 2) return 0;
+    const recentEntries = weightEntries.slice(0, 4); // Last 4 entries
+    const firstWeight = parseFloat(recentEntries[recentEntries.length - 1].weight);
+    const lastWeight = parseFloat(recentEntries[0].weight);
+    return firstWeight - lastWeight;
+  })();
+
+  const goalProgress = goalWeight > 0 ? Math.round(((startWeight - currentWeight) / (startWeight - goalWeight)) * 100) : 0;
 
   const greeting = (() => {
     const hour = new Date().getHours();
@@ -83,7 +96,7 @@ export default function Home() {
               <div>
                 <p className="text-indigo-100 text-xs font-medium">Current Weight</p>
                 <p className="text-white text-lg font-bold" data-testid="text-current-weight">
-                  {currentWeight ? `${currentWeight} lbs` : "-- lbs"}
+                  {currentWeight ? `${currentWeight} ${weightUnit}` : `-- ${weightUnit}`}
                 </p>
               </div>
               <i className="fas fa-weight text-indigo-200"></i>
@@ -94,7 +107,7 @@ export default function Home() {
               <div>
                 <p className="text-indigo-100 text-xs font-medium">Lost This Month</p>
                 <p className="text-white text-lg font-bold" data-testid="text-monthly-loss">
-                  -{monthlyLoss} lbs
+                  -{monthlyLoss.toFixed(1)} {weightUnit}
                 </p>
               </div>
               <i className="fas fa-arrow-down text-green-300"></i>
@@ -146,7 +159,9 @@ export default function Home() {
         <WeightChart 
           weightEntries={weightEntries || []} 
           totalLoss={totalLoss}
-          goalProgress={79} // Mock goal progress
+          goalProgress={goalProgress}
+          goalWeight={goalWeight}
+          weightUnit={weightUnit}
         />
       </div>
 

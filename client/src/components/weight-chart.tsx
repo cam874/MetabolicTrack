@@ -6,9 +6,11 @@ interface WeightChartProps {
   weightEntries: WeightEntry[];
   totalLoss: number;
   goalProgress: number;
+  goalWeight?: number;
+  weightUnit?: string;
 }
 
-export default function WeightChart({ weightEntries, totalLoss, goalProgress }: WeightChartProps) {
+export default function WeightChart({ weightEntries, totalLoss, goalProgress, goalWeight, weightUnit = "lbs" }: WeightChartProps) {
   // Format data for chart
   const chartData = weightEntries
     .slice()
@@ -17,6 +19,36 @@ export default function WeightChart({ weightEntries, totalLoss, goalProgress }: 
       date: new Date(entry.date).toLocaleDateString("en-US", { month: "short" }),
       weight: parseFloat(entry.weight),
     }));
+
+  // Calculate goal prediction
+  const calculateGoalPrediction = () => {
+    if (!goalWeight || weightEntries.length < 2) return null;
+    
+    const currentWeight = parseFloat(weightEntries[0].weight);
+    const remainingWeight = currentWeight - goalWeight;
+    
+    // Calculate average weekly loss based on recent entries
+    const recentEntries = weightEntries.slice(0, Math.min(8, weightEntries.length)); // Last 8 weeks
+    if (recentEntries.length < 2) return null;
+    
+    const weeksBetween = (new Date(recentEntries[0].date).getTime() - new Date(recentEntries[recentEntries.length - 1].date).getTime()) / (1000 * 60 * 60 * 24 * 7);
+    const totalLossInPeriod = parseFloat(recentEntries[recentEntries.length - 1].weight) - parseFloat(recentEntries[0].weight);
+    const avgWeeklyLoss = Math.abs(totalLossInPeriod / weeksBetween);
+    
+    if (avgWeeklyLoss <= 0) return null;
+    
+    const weeksToGoal = Math.ceil(remainingWeight / avgWeeklyLoss);
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + (weeksToGoal * 7));
+    
+    return {
+      weeksToGoal,
+      targetDate: targetDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
+      avgWeeklyLoss: avgWeeklyLoss.toFixed(1)
+    };
+  };
+
+  const goalPrediction = calculateGoalPrediction();
 
   return (
     <Card className="shadow-sm border border-gray-100">
@@ -37,7 +69,7 @@ export default function WeightChart({ weightEntries, totalLoss, goalProgress }: 
             <div>
               <p className="text-white/80 text-sm">Total Loss</p>
               <p className="text-2xl font-bold" data-testid="text-total-loss">
-                -{totalLoss.toFixed(1)} lbs
+                -{totalLoss.toFixed(1)} {weightUnit}
               </p>
             </div>
             <div className="text-right">
@@ -69,6 +101,19 @@ export default function WeightChart({ weightEntries, totalLoss, goalProgress }: 
                   />
                 </LineChart>
               </ResponsiveContainer>
+            </div>
+          )}
+          
+          {/* Goal Prediction */}
+          {goalPrediction && (
+            <div className="mt-4 p-3 bg-white/20 rounded-lg">
+              <p className="text-white/80 text-xs mb-1">Goal Prediction</p>
+              <p className="text-white text-sm font-medium" data-testid="text-goal-prediction">
+                At {goalPrediction.avgWeeklyLoss} {weightUnit}/week, you'll reach your goal around {goalPrediction.targetDate}
+              </p>
+              <p className="text-white/60 text-xs mt-1">
+                (~{goalPrediction.weeksToGoal} weeks remaining)
+              </p>
             </div>
           )}
         </div>

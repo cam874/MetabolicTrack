@@ -188,6 +188,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update user endpoint
+  app.patch("/api/users/:username", async (req, res) => {
+    try {
+      const { username } = req.params;
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const updatedUser = await storage.updateUser(user.id, req.body);
+      res.json(updatedUser);
+    } catch (error) {
+      res.status(400).json({ message: error instanceof Error ? error.message : "Update failed" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
