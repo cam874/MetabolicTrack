@@ -50,6 +50,10 @@ export default function Onboarding() {
 
   const completeMutation = useMutation({
     mutationFn: async (onboardingData: OnboardingData) => {
+      // Get current user
+      const user = await apiRequest("GET", "/api/demo-user");
+      const userId = user.id;
+
       // Update user profile
       await apiRequest("PATCH", "/api/users/demo", {
         firstName: onboardingData.firstName,
@@ -63,23 +67,23 @@ export default function Onboarding() {
 
       // Create initial weight entry
       await apiRequest("POST", "/api/weight-entries", {
-        userId: "demo", // This will be replaced with actual user ID
+        userId: userId,
         weight: onboardingData.startWeight,
         unit: onboardingData.weightUnit,
-        date: onboardingData.startDate,
+        date: new Date(onboardingData.startDate).toISOString(),
         notes: "Starting weight"
       });
 
       // Create medication
       await apiRequest("POST", "/api/medications", {
-        userId: "demo", // This will be replaced with actual user ID
+        userId: userId,
         name: onboardingData.medicationName,
         type: onboardingData.medicationType,
         currentDose: onboardingData.currentDose,
         targetDose: "2.0", // Default target
         unit: "mg",
         frequency: "weekly",
-        startDate: onboardingData.startDate,
+        startDate: new Date(onboardingData.startDate).toISOString(),
         nextDoseDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // Next week
         isActive: "true"
       });

@@ -33,6 +33,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const entry = await storage.createWeightEntry(data);
       res.json(entry);
     } catch (error) {
+      console.error("Weight entry creation error:", error);
       res.status(400).json({ message: error instanceof Error ? error.message : "Invalid data" });
     }
   });
@@ -74,6 +75,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const medication = await storage.createMedication(data);
       res.json(medication);
     } catch (error) {
+      console.error("Medication creation error:", error);
       res.status(400).json({ message: error instanceof Error ? error.message : "Invalid data" });
     }
   });
