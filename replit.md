@@ -42,10 +42,14 @@ The architecture includes provisions for session-based authentication using Post
 - **Medication Database**: Pre-configured options for common GLP-1 medications (Ozempic, Wegovy, Mounjaro, etc.)
 - **Smart Defaults**: Automatic titration schedule generation based on medication type
 
-### Enhanced Analytics
-- **Dynamic Weight Chart**: Progress visualization with goal prediction timeline
-- **Personalized Metrics**: All weight displays respect user's preferred unit (lbs/kg)
-- **Weekly Loss Calculation**: Real-time average weekly loss calculations for goal predictions
+### Progress Page Redesign (August 2025)
+- **Analytics → Progress**: Renamed analytics page to "Progress" with updated navigation
+- **Advanced Weight Trajectory Chart**: Beautiful line chart with actual weight data and trend prediction
+- **Goal Completion Prediction**: Linear regression algorithm that calculates projected goal achievement date
+- **Editable Logs Section**: Recent weight entries and injection logs with edit/delete functionality
+- **Prominent Import Button**: Full-width screenshot import button positioned prominently
+- **Removed Quick Actions**: Cleaned up home page by removing Quick Actions section
+- **Enhanced Data Management**: Users can now edit and delete their recent entries directly from the Progress page
 
 ## External Dependencies
 

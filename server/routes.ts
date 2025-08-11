@@ -52,6 +52,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/weight-entries/:entryId", async (req, res) => {
+    try {
+      const { entryId } = req.params;
+      await storage.deleteWeightEntry(entryId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: error instanceof Error ? error.message : "Internal server error" });
+    }
+  });
+
   // Medications
   app.get("/api/medications/:userId", async (req, res) => {
     try {
@@ -134,6 +144,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const medicationId = req.query.medicationId as string;
       const count = await storage.getInjectionCount(userId, medicationId);
       res.json({ count });
+    } catch (error) {
+      res.status(500).json({ message: error instanceof Error ? error.message : "Internal server error" });
+    }
+  });
+
+  app.delete("/api/injection-logs/:logId", async (req, res) => {
+    try {
+      const { logId } = req.params;
+      await storage.deleteInjectionLog(logId);
+      res.json({ success: true });
     } catch (error) {
       res.status(500).json({ message: error instanceof Error ? error.message : "Internal server error" });
     }

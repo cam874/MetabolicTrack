@@ -133,64 +133,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="px-4 py-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">Quick Actions</h3>
-        <div className="grid grid-cols-3 gap-3">
-          
-          {/* Screenshot Upload */}
-          <button 
-            onClick={() => {
-              setDialogTab("import");
-              setDialogOpen(true);
-            }}
-            className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center" 
-            data-testid="button-import-screenshot"
-          >
-            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-              <Camera className="w-4 h-4 text-primary" />
-            </div>
-            <div className="text-xs font-medium text-gray-900">Import</div>
-            <div className="text-xs text-gray-500 mt-1">Screenshot</div>
-          </button>
 
-          {/* Manual Weight Entry */}
-          <button 
-            onClick={() => {
-              setDialogTab("weight");
-              setDialogOpen(true);
-            }}
-            className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center" 
-            data-testid="button-log-weight"
-          >
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-              <Plus className="w-4 h-4 text-secondary" />
-            </div>
-            <div className="text-xs font-medium text-gray-900">Log</div>
-            <div className="text-xs text-gray-500 mt-1">Weight</div>
-          </button>
-
-          {/* Injection Counter */}
-          <button 
-            onClick={() => {
-              setDialogTab("injection");
-              setDialogOpen(true);
-            }}
-            className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 text-center relative" 
-            data-testid="button-injection-log"
-          >
-            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-              <Syringe className="w-4 h-4 text-accent" />
-            </div>
-            <div className="text-xs font-medium text-gray-900">Injection</div>
-            <div className="text-xs text-gray-500 mt-1">Log</div>
-            <div className="absolute -top-1 -right-1 bg-accent text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium" data-testid="text-injection-count">
-              {injectionCount?.count || 0}
-            </div>
-          </button>
-
-        </div>
-      </div>
 
       {/* Progress Chart */}
       <div className="px-4 py-2">

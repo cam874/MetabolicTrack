@@ -18,6 +18,7 @@ export interface IStorage {
   getWeightEntries(userId: string, limit?: number): Promise<WeightEntry[]>;
   createWeightEntry(entry: InsertWeightEntry): Promise<WeightEntry>;
   getLatestWeight(userId: string): Promise<WeightEntry | undefined>;
+  deleteWeightEntry(entryId: string): Promise<void>;
 
   // Medications
   getUserMedications(userId: string): Promise<Medication[]>;
@@ -29,6 +30,7 @@ export interface IStorage {
   getInjectionLogs(userId: string, medicationId?: string): Promise<InjectionLog[]>;
   createInjectionLog(log: InsertInjectionLog): Promise<InjectionLog>;
   getInjectionCount(userId: string, medicationId?: string): Promise<number>;
+  deleteInjectionLog(logId: string): Promise<void>;
 
   // Data Imports
   createDataImport(dataImport: InsertDataImport): Promise<DataImport>;
@@ -186,6 +188,10 @@ export class MemStorage implements IStorage {
     return entries[0];
   }
 
+  async deleteWeightEntry(entryId: string): Promise<void> {
+    this.weightEntries.delete(entryId);
+  }
+
   // Medication methods
   async getUserMedications(userId: string): Promise<Medication[]> {
     return Array.from(this.medications.values())
@@ -246,6 +252,10 @@ export class MemStorage implements IStorage {
   async getInjectionCount(userId: string, medicationId?: string): Promise<number> {
     const logs = await this.getInjectionLogs(userId, medicationId);
     return logs.length;
+  }
+
+  async deleteInjectionLog(logId: string): Promise<void> {
+    this.injectionLogs.delete(logId);
   }
 
   // Data import methods
