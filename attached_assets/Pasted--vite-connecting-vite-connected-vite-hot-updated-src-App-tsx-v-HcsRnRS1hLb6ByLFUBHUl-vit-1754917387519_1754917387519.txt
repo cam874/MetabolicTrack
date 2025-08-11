@@ -1,0 +1,38 @@
+[vite] connecting...
+[vite] connected.
+[vite] hot updated: /src/App.tsx?v=HcsRnRS1hLb6ByLFUBHUl
+[vite] hot updated: /src/index.css?v=HcsRnRS1hLb6ByLFUBHUl
+Cannot read properties of undefined (reading 'toString')
+Cannot read properties of undefined (reading 'toString')
+The above error occurred in the <Analytics> component:
+
+    at Analytics (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/src/pages/analytics.tsx:30:39)
+    at Route (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=04f98d8b:323:16)
+    at Switch (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=04f98d8b:379:17)
+    at div
+    at Router (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/src/App.tsx?t=1754917367528&v=HcsRnRS1hLb6ByLFUBHUl:32:30)
+    at Provider (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5SZQWSWC.js?v=04f98d8b:48:15)
+    at TooltipProvider (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=04f98d8b:59:5)
+    at QueryClientProvider (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=04f98d8b:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+at Analytics (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/src/pages/analytics.tsx:30:39)
+at Route (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=04f98d8b:323:16)
+at Switch (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=04f98d8b:379:17)
+at div
+at Router (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/src/App.tsx?t=1754917367528&amp;v=HcsRnRS1hLb6ByLFUBHUl:32:30)
+at Provider (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5SZQWSWC.js?v=04f98d8b:48:15)
+at TooltipProvider (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=04f98d8b:59:5)
+at QueryClientProvider (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=04f98d8b:2805:3)
+at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+at t.value (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://cc29f324-61b1-45e0-9671-bf61044aef1c-00-3l6yncx4ro4lk.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Cannot read properties of undefined (reading 'toString')

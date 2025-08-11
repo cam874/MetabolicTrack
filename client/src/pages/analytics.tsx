@@ -19,12 +19,12 @@ export default function Analytics() {
     queryKey: ["/api/demo-user"],
   });
 
-  const { data: weightEntries } = useQuery({
+  const { data: weightEntries = [] } = useQuery({
     queryKey: ["/api/weight-entries", demoUser?.id],
     enabled: !!demoUser?.id,
   });
 
-  const { data: injectionLogs } = useQuery({
+  const { data: injectionLogs = [] } = useQuery({
     queryKey: ["/api/injection-logs", demoUser?.id],
     enabled: !!demoUser?.id,
   });
@@ -43,10 +43,10 @@ export default function Analytics() {
     },
   });
 
-  // Calculate progress metrics
-  const currentWeight = weightEntries?.[0] ? parseFloat(weightEntries[0].weight) : 0;
+  // Calculate progress metrics with safety checks
+  const currentWeight = weightEntries && weightEntries.length > 0 ? parseFloat(weightEntries[0]?.weight || "0") : 0;
   const startWeight = demoUser?.startWeight ? parseFloat(demoUser.startWeight) : 
-    (weightEntries?.[weightEntries.length - 1] ? parseFloat(weightEntries[weightEntries.length - 1].weight) : 0);
+    (weightEntries && weightEntries.length > 0 ? parseFloat(weightEntries[weightEntries.length - 1]?.weight || "0") : 0);
   const goalWeight = demoUser?.goalWeight ? parseFloat(demoUser.goalWeight) : 0;
   const weightUnit = demoUser?.weightUnit || "lbs";
   const totalLoss = startWeight - currentWeight;
@@ -54,10 +54,10 @@ export default function Analytics() {
 
   // Calculate trajectory and prediction
   const chartData = weightEntries?.slice().reverse().map((entry, index) => ({
-    date: format(parseISO(entry.date.toString()), "MMM dd"),
-    weight: parseFloat(entry.weight),
+    date: format(parseISO(entry.date?.toString() || new Date().toISOString()), "MMM dd"),
+    weight: parseFloat(entry.weight || "0"),
     dayIndex: index,
-    fullDate: entry.date
+    fullDate: entry.date || new Date()
   })) || [];
 
   // Calculate linear regression for trend line
@@ -77,8 +77,8 @@ export default function Analytics() {
     let projectedGoalDate = null;
     if (slope < 0 && goalWeight > 0) { // Only if losing weight
       const daysToGoal = (goalWeight - intercept) / slope;
-      if (daysToGoal > 0) {
-        const startDate = parseISO(chartData[0].fullDate.toString());
+      if (daysToGoal > 0 && chartData.length > 0) {
+        const startDate = parseISO(chartData[0].fullDate?.toString() || new Date().toISOString());
         projectedGoalDate = addDays(startDate, Math.round(daysToGoal));
       }
     }
@@ -95,8 +95,8 @@ export default function Analytics() {
   }));
 
   // Recent logs for editing
-  const recentWeightEntries = weightEntries?.slice(0, 5) || [];
-  const recentInjectionLogs = injectionLogs?.slice(0, 5) || [];
+  const recentWeightEntries = (weightEntries || []).slice(0, 5);
+  const recentInjectionLogs = (injectionLogs || []).slice(0, 5);
 
   return (
     <main className="max-w-md mx-auto min-h-screen pb-20 pt-4">
@@ -255,7 +255,7 @@ export default function Analytics() {
                   <div>
                     <p className="font-medium">{entry.weight} {entry.unit}</p>
                     <p className="text-sm text-gray-600">
-                      {format(parseISO(entry.date.toString()), "MMM dd, yyyy")}
+                      {format(parseISO(entry.date?.toString() || new Date().toISOString()), "MMM dd, yyyy")}
                     </p>
                     {entry.notes && (
                       <p className="text-xs text-gray-500 mt-1">{entry.notes}</p>
@@ -303,11 +303,11 @@ export default function Analytics() {
                 <div key={log.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <Badge variant="outline">{log.injectionSite}</Badge>
-                      <span className="text-sm font-medium">{log.dosage}mg</span>
+                      <Badge variant="outline">{log.injectionSite || "Unknown"}</Badge>
+                      <span className="text-sm font-medium">{log.dose || log.dosage || "0"}mg</span>
                     </div>
                     <p className="text-sm text-gray-600">
-                      {format(parseISO(log.injectionDate.toString()), "MMM dd, yyyy 'at' h:mm a")}
+                      {format(parseISO((log.date || log.injectionDate)?.toString() || new Date().toISOString()), "MMM dd, yyyy 'at' h:mm a")}
                     </p>
                     {log.notes && (
                       <p className="text-xs text-gray-500 mt-1">{log.notes}</p>
